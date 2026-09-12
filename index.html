@@ -1,77 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataParser Pro | Instant Text & Log Cleaner</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DataParser Pro | Instant Text & Log Cleaner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
-            <span class="font-bold text-lg tracking-tight">DataParser <span class="text-indigo-400">Pro</span></span>
-            <span class="text-xs bg-indigo-950 text-indigo-300 px-3 py-1 rounded-full border border-indigo-800/50">Zero-Config Utility</span>
+  <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-6 py-4 flex justify-between items-center">
+      <span class="font-bold text-lg tracking-tight">DataParser <span class="text-indigo-400">Pro</span></span>
+      <span class="text-xs bg-indigo-950 text-indigo-300 px-3 py-1 rounded-full border border-indigo-800/50">Zero-Config Utility</span>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-6 py-10 flex-grow w-full space-y-8">
+    <div class="grid grid-cols-1 gap-6">
+      <div class="space-y-2">
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Input Data</label>
+        <textarea id="rawInput" rows="8" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-4 font-mono text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Paste raw unstructured rows here..."></textarea>
+      </div>
+
+      <button onclick="processData()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-lg transition shadow-lg shadow-indigo-600/20">
+        Process Data Preview
+      </button>
+
+      <div class="space-y-2">
+        <div class="flex justify-between items-center">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Output Preview (First 5 Rows)</label>
+          <span id="lockStatus" class="text-xs text-amber-400 hidden">Full export locked ($9 unlock)</span>
         </div>
-    </header>
+        <pre id="outputPreview" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-300 min-h-[120px] overflow-x-auto">Waiting for input...</pre>
+      </div>
 
-    <main class="max-w-4xl mx-auto px-6 py-10 flex-grow w-full space-y-8">
-        <div class="space-y-2">
-            <h1 class="text-3xl font-extrabold tracking-tight">Clean & Format Raw Data Instantly</h1>
-            <p class="text-slate-400 text-sm">Paste your unstructured text, logs, or messy data below to parse it into structured JSON or clean CSV format.</p>
+      <div id="checkoutContainer" class="hidden pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="text-sm text-slate-300">
+          <p class="font-medium">Unlock full cleaned file export (Unlimited rows)</p>
+          <p class="text-xs text-slate-500">Secure one-time payment via Stripe.</p>
         </div>
+        <button onclick="triggerCheckout()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-lg transition">
+          Unlock Full Export — $9
+        </button>
+      </div>
+    </div>
+  </main>
 
-        <div class="grid grid-cols-1 gap-6">
-            <div class="space-y-2">
-                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Input Data</label>
-                <textarea id="rawInput" rows="8" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-4 font-mono text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Paste raw unstructured rows here..."></textarea>
-            </div>
+  <!-- Compact Footer Feedback Box -->
+  <footer class="mt-auto border-t border-slate-800 bg-slate-900/50 py-8 px-6 text-center">
+    <div class="max-w-md mx-auto">
+      <h4 class="text-sm font-semibold text-slate-300 mb-1">Have an idea or feedback?</h4>
+      <p class="text-xs text-slate-400 mb-4">Let me know what tools you want next.</p>
+      
+      <form action="https://formspree.io/f/xdeojqej" method="POST" class="flex flex-col sm:flex-row gap-2">
+        <input type="email" name="email" placeholder="Email (optional)" class="text-xs rounded bg-slate-800 border border-slate-700 text-slate-200 px-3 py-2 flex-grow focus:outline-none focus:border-indigo-500">
+        <input type="text" name="message" placeholder="Your idea..." required class="text-xs rounded bg-slate-800 border border-slate-700 text-slate-200 px-3 py-2 flex-grow focus:outline-none focus:border-indigo-500">
+        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium px-4 py-2 rounded transition">Send</button>
+      </form>
+      
+      <p class="text-[10px] text-slate-500 mt-4">&copy; 2026 DataParser Pro. Powered by Cloudflare & Stripe.</p>
+    </div>
+  </footer>
 
-            <button onclick="processData()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-lg transition shadow-lg shadow-indigo-600/20">
-                Process Data Preview
-            </button>
+  <script>
+    function processData() {
+      const input = document.getElementById('rawInput').value.trim();
+      if (!input) return;
 
-            <div class="space-y-2">
-                <div class="flex justify-between items-center">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Output Preview (First 5 Rows)</label>
-                    <span id="lockStatus" class="text-xs text-amber-400 hidden">Full export locked ($9 unlock)</span>
-                </div>
-                <pre id="outputPreview" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-300 min-h-[120px] overflow-x-auto">Waiting for input...</pre>
-            </div>
+      const lines = input.split('\n');
+      const parsed = lines.slice(0, 5).map((line, idx) => ({
+        row: idx + 1,
+        content: line.trim(),
+        status: "parsed"
+      }));
 
-            <div id="checkoutContainer" class="hidden pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div class="text-sm text-slate-300">
-                    <p class="font-medium">Unlock full cleaned file export (Unlimited rows)</p>
-                    <p class="text-xs text-slate-500">Secure one-time payment via Stripe.</p>
-                </div>
-                <button onclick="triggerCheckout()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-lg transition">
-                    Unlock Full Export — $9
-                </button>
-            </div>
-        </div>
-    </main>
+      document.getElementById('outputPreview').textContent = JSON.stringify(parsed, null, 2);
+      document.getElementById('lockStatus').classList.remove('hidden');
+      document.getElementById('checkoutContainer').classList.remove('hidden');
+    }
 
-    <footer class="border-t border-slate-900 py-6 text-center text-xs text-slate-600">
-        &copy; 2026 DataParser Pro. Powered by Cloudflare & Stripe.
-    </footer>
-<script>
-        function processData() {
-            const input = document.getElementById('rawInput').value.trim();
-            if (!input) return;
-
-            const lines = input.split('\n');
-            const parsed = lines.slice(0, 5).map((line, idx) => ({
-                row: idx + 1,
-                content: line.trim(),
-                status: "parsed"
-            }));
-
-            document.getElementById('outputPreview').textContent = JSON.stringify(parsed, null, 2);
-            document.getElementById('lockStatus').classList.remove('hidden');
-            document.getElementById('checkoutContainer').classList.remove('hidden');
-        }
-
-  function triggerCheckout() {
-            window.location.href = 'https://buy.stripe.com/28EfZh5OJe0igWVeDa0ZW01';
+    function triggerCheckout() {
+      window.location.href = 'https://buy.stripe.com/28EfZh5OJe0igWVeDa0ZW01';
         }
     </script>
 </body>
