@@ -18,12 +18,14 @@
   <script>
     tailwind.config = { darkMode: 'class' };
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 <body class="bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
   <header class="border-b border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/50 backdrop-blur sticky top-0 z-50">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap justify-between items-center gap-2">
       <span class="font-bold text-lg tracking-tight">DataParser <span class="text-indigo-600 dark:text-indigo-400">Pro</span></span>
       <div class="flex items-center gap-2">
+        <span id="powerBadge" class="hidden text-xs bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950 dark:text-violet-300 dark:border-violet-800/50 px-3 py-1 rounded-full border">⚡ Power</span>
         <span class="text-xs bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 px-3 py-1 rounded-full border dark:border-indigo-800/50">Zero-Config Utility</span>
         <button id="themeToggle" type="button" aria-label="Toggle light/dark theme" class="w-9 h-9 shrink-0 flex items-center justify-center rounded-full border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition text-slate-700 dark:text-slate-200"></button>
       </div>
@@ -33,8 +35,9 @@
   <main class="max-w-4xl mx-auto px-4 sm:px-6 py-10 flex-grow w-full space-y-8">
     <div class="space-y-2">
       <h1 class="text-3xl font-extrabold tracking-tight">Clean & Format Raw Data Instantly</h1>
-      <p class="text-slate-600 dark:text-slate-400 text-sm">Paste unstructured text, CSV, logs, source code, or key:value data below. We auto-detect the format and structure it into clean JSON.</p>
-      <p class="text-xs text-slate-600 dark:text-slate-500">Free preview of the first 5 rows &middot; <span class="text-emerald-600 dark:text-emerald-400 font-medium">$9 one-time unlock</span> for the full export.</p>
+      <p class="text-slate-600 dark:text-slate-400 text-sm">Paste unstructured text, CSV, logs, source code, or key:value data below. We auto-detect the format and structure it into clean JSON, CSV, or Markdown.</p>
+      <p class="text-xs text-slate-600 dark:text-slate-500">Free preview of the first 5 rows &middot; <span class="text-emerald-600 dark:text-emerald-400 font-medium">$9 one-time unlock</span> for a single full export.</p>
+      <p class="text-xs text-slate-600 dark:text-slate-500">Need batch files, bulk .zip export, and unlimited saved history? <button type="button" onclick="triggerPowerCheckout()" class="text-violet-600 dark:text-violet-400 font-medium hover:underline">Go Power — $4.99/mo</button></p>
     </div>
 
     <div class="grid grid-cols-1 gap-6">
@@ -43,19 +46,37 @@
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Input Data</label>
           <button type="button" onclick="clearInput()" class="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:underline">Clear</button>
         </div>
-        <textarea id="rawInput" rows="8" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 font-mono text-base sm:text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Paste raw unstructured rows here, or drop a file..."></textarea>
+        <textarea id="rawInput" rows="8" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 font-mono text-base sm:text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Paste raw unstructured rows here, or drop one or more files..."></textarea>
 
         <div class="flex flex-wrap items-center gap-3 text-xs">
           <label for="fileUpload" class="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 rounded border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300">
-            Upload File
+            Upload File(s)
           </label>
-          <input id="fileUpload" type="file" accept=".txt,.csv,.tsv,.log,.json,.md" class="hidden">
+          <input id="fileUpload" type="file" accept=".txt,.csv,.tsv,.log,.json,.md" multiple class="hidden">
           <span id="fileName" class="text-slate-500 dark:text-slate-500 truncate"></span>
           <span class="text-slate-400 dark:text-slate-600">|</span>
           <span class="text-slate-500 dark:text-slate-400">Try an example:</span>
           <button type="button" onclick="loadSample('csv')" class="text-indigo-600 dark:text-indigo-400 hover:underline">CSV</button>
           <button type="button" onclick="loadSample('log')" class="text-indigo-600 dark:text-indigo-400 hover:underline">Log</button>
           <button type="button" onclick="loadSample('code')" class="text-indigo-600 dark:text-indigo-400 hover:underline">Code</button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 text-xs pt-1">
+          <label class="text-slate-500 dark:text-slate-400">Delimiter:</label>
+          <select id="delimiterOverride" class="bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-slate-700 dark:text-slate-300">
+            <option value="auto">Auto-detect</option>
+            <option value=",">Comma</option>
+            <option value="tab">Tab</option>
+            <option value="|">Pipe</option>
+            <option value=";">Semicolon</option>
+          </select>
+          <span class="text-slate-400 dark:text-slate-600">|</span>
+          <label class="text-slate-500 dark:text-slate-400 flex items-center gap-1 cursor-pointer">
+            <input id="minifyToggle" type="checkbox" class="rounded">
+            Minify JSON
+          </label>
+          <span class="text-slate-400 dark:text-slate-600 hidden sm:inline">|</span>
+          <span class="text-slate-500 dark:text-slate-400 hidden sm:inline"><kbd class="px-1 py-0.5 border border-slate-300 dark:border-slate-700 rounded text-[10px]">Ctrl/⌘+Enter</kbd> to process &middot; <kbd class="px-1 py-0.5 border border-slate-300 dark:border-slate-700 rounded text-[10px]">Esc</kbd> to clear</span>
         </div>
         <p class="text-[11px] text-slate-500 dark:text-slate-500">Runs 100% in your browser &mdash; nothing is uploaded or stored on a server.</p>
       </div>
@@ -65,15 +86,31 @@
       </button>
 
       <div class="space-y-2">
-        <div class="flex justify-between items-center flex-wrap gap-1">
+        <div class="flex justify-between items-center flex-wrap gap-2">
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Output Preview</label>
           <div class="flex items-center gap-3">
+            <select id="exportFormat" class="text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-slate-700 dark:text-slate-300">
+              <option value="json">JSON</option>
+              <option value="csv">CSV</option>
+              <option value="md">Markdown</option>
+            </select>
             <button id="copyBtn" onclick="copyOutput()" class="hidden text-xs text-indigo-600 dark:text-indigo-400 hover:underline">Copy</button>
             <span id="lockStatus" class="text-xs text-amber-600 dark:text-amber-400 hidden">Full export locked ($9 unlock)</span>
           </div>
         </div>
         <p id="formatInfo" class="text-xs text-slate-600 dark:text-slate-500 hidden"></p>
         <pre id="outputPreview" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-700 dark:text-slate-300 min-h-[120px] overflow-x-auto">Waiting for input...</pre>
+      </div>
+
+      <div id="batchResults" class="hidden bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4"></div>
+
+      <div id="historyPanel" class="hidden space-y-1">
+        <div class="flex justify-between items-center">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Recent (this browser)</label>
+          <button type="button" onclick="clearHistory()" class="text-xs text-slate-500 dark:text-slate-400 hover:underline">Clear history</button>
+        </div>
+        <div id="historyList" class="max-h-40 overflow-y-auto border border-slate-200 dark:border-slate-800 rounded-lg divide-y divide-slate-200 dark:divide-slate-800"></div>
+        <p id="historyCapNote" class="text-[11px] text-slate-500 dark:text-slate-500"></p>
       </div>
 
       <div id="checkoutContainer" class="hidden pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -112,6 +149,13 @@
 
   <script>
     let fullResult = null;
+    let batchResults = [];
+
+    const formatLabels = { csv: 'CSV', log: 'Log', kv: 'Key-Value', code: 'Source Code', raw: 'Plain text' };
+
+    // TODO: create a recurring Price + Payment Link for the Power tier in your
+    // Stripe dashboard, then replace this placeholder with that link.
+    const POWER_CHECKOUT_URL = 'https://buy.stripe.com/REPLACE_WITH_POWER_SUBSCRIPTION_LINK';
 
     const SUN_ICON = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1.5m0 15V21m8.25-9h-1.5m-15 0H3m14.36-6.36l-1.06 1.06M6.7 17.3l-1.06 1.06m0-12.72l1.06 1.06M17.3 17.3l1.06 1.06M12 7.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"/></svg>';
     const MOON_ICON = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>';
@@ -121,6 +165,16 @@
       log: '2024-01-01 10:00:00 ERROR Failed to connect\n2024-01-01 10:00:05 INFO Retrying connection\n2024-01-01 10:00:10 WARN Slow response',
       code: 'def greet(name):\n    # say hello\n    print(f"Hello, {name}!")\n    return True'
     };
+
+    function isPowerUser() {
+      return sessionStorage.getItem('dpp_power') === '1';
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
 
     function setTheme(theme) {
       document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -140,6 +194,7 @@
     function loadSample(key) {
       document.getElementById('rawInput').value = SAMPLES[key];
       document.getElementById('fileName').textContent = '';
+      document.getElementById('fileUpload').value = '';
       processData();
     }
 
@@ -154,8 +209,106 @@
       reader.readAsText(file);
     }
 
+    async function loadBatch(fileList) {
+      resetOutput();
+      const files = Array.from(fileList);
+      document.getElementById('fileName').textContent = `${files.length} files selected`;
+      const results = [];
+      for (const file of files) {
+        const text = await file.text();
+        const trimmed = text.trim();
+        if (!trimmed) continue;
+        const lines = trimmed.split('\n').filter(l => l.trim().length > 0);
+        const format = detectFormat(lines);
+        let data;
+        switch (format.type) {
+          case 'csv': data = parseCSV(lines, format.delim); break;
+          case 'log': data = parseLog(lines, format.pattern); break;
+          case 'code': data = parseCode(lines); break;
+          case 'kv': data = [parseKV(lines, format.pattern)]; break;
+          default: data = parseRaw(lines);
+        }
+        results.push({ filename: file.name, formatType: format.type, data });
+      }
+      batchResults = results;
+      renderBatchResults();
+    }
+
+    function renderBatchResults() {
+      const container = document.getElementById('batchResults');
+      if (batchResults.length === 0) {
+        container.classList.add('hidden');
+        container.innerHTML = '';
+        return;
+      }
+      const rows = batchResults.map((r, i) => `
+        <div class="flex items-center justify-between gap-2 py-1.5 border-b border-slate-200 dark:border-slate-800 last:border-b-0 text-xs">
+          <span class="truncate text-slate-700 dark:text-slate-300">${escapeHtml(r.filename)} <span class="text-slate-400 dark:text-slate-600">(${formatLabels[r.formatType]}, ${r.data.length} row${r.data.length === 1 ? '' : 's'})</span></span>
+          <button onclick="downloadBatchFile(${i})" class="text-indigo-600 dark:text-indigo-400 hover:underline shrink-0">Download</button>
+        </div>
+      `).join('');
+      const zipControl = isPowerUser()
+        ? `<button onclick="downloadBatchZip()" class="mt-3 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 rounded-lg transition text-sm">Download All as .zip</button>`
+        : `<div class="mt-3 text-xs text-slate-500 dark:text-slate-400">Bulk .zip download is a Power tier feature. <button type="button" onclick="triggerPowerCheckout()" class="text-violet-600 dark:text-violet-400 font-medium hover:underline">Go Power</button> to unlock it.</div>`;
+      container.innerHTML = `<p class="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2">Batch Results (${batchResults.length} files)</p>${rows}${zipControl}`;
+      container.classList.remove('hidden');
+    }
+
+    function mimeFor(format) {
+      return { json: 'application/json', csv: 'text/csv', md: 'text/markdown' }[format] || 'text/plain';
+    }
+
+    function extFor(format) {
+      return { json: 'json', csv: 'csv', md: 'md' }[format] || 'txt';
+    }
+
+    function downloadBlob(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadBatchFile(i) {
+      const r = batchResults[i];
+      if (!r) return;
+      const format = document.getElementById('exportFormat').value;
+      const minify = document.getElementById('minifyToggle').checked;
+      const content = formatOutput(r.data, format, minify);
+      downloadBlob(content, `${r.filename.replace(/\.[^.]+$/, '')}.${extFor(format)}`, mimeFor(format));
+    }
+
+    async function downloadBatchZip() {
+      if (typeof JSZip === 'undefined') {
+        alert('The .zip library failed to load (check your connection) — try again, or use the per-file Download links instead.');
+        return;
+      }
+      const format = document.getElementById('exportFormat').value;
+      const minify = document.getElementById('minifyToggle').checked;
+      const zip = new JSZip();
+      batchResults.forEach(r => {
+        zip.file(`${r.filename.replace(/\.[^.]+$/, '')}.${extFor(format)}`, formatOutput(r.data, format, minify));
+      });
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'dataparser-pro-batch-export.zip';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
     document.getElementById('fileUpload').addEventListener('change', (e) => {
-      loadFile(e.target.files[0]);
+      const files = e.target.files;
+      if (files.length > 1) loadBatch(files);
+      else loadFile(files[0]);
     });
 
     const rawInputEl = document.getElementById('rawInput');
@@ -169,7 +322,18 @@
     rawInputEl.addEventListener('drop', (e) => {
       e.preventDefault();
       rawInputEl.classList.remove('ring-2', 'ring-indigo-500');
-      loadFile(e.dataTransfer.files[0]);
+      const files = e.dataTransfer.files;
+      if (files.length > 1) loadBatch(files);
+      else loadFile(files[0]);
+    });
+    rawInputEl.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        processData();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        clearInput();
+      }
     });
 
     function clearInput() {
@@ -181,17 +345,50 @@
     }
 
     function copyOutput() {
-      const text = document.getElementById('outputPreview').textContent;
-      if (!text || text === 'Waiting for input...') return;
+      if (!fullResult) return;
+      const format = document.getElementById('exportFormat').value;
+      const minify = document.getElementById('minifyToggle').checked;
+      const text = formatOutput(fullResult.slice(0, 5), format, minify);
       const btn = document.getElementById('copyBtn');
       navigator.clipboard.writeText(text).then(() => {
-        const original = 'Copy';
         btn.textContent = 'Copied!';
-        setTimeout(() => { btn.textContent = original; }, 1500);
+        setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
       }).catch(() => {
         btn.textContent = 'Copy failed';
         setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
       });
+    }
+
+    function toCSV(rows) {
+      const arr = Array.isArray(rows) ? rows : [rows];
+      const keySet = new Set();
+      arr.forEach(r => Object.keys(r).forEach(k => keySet.add(k)));
+      const keys = Array.from(keySet);
+      const escape = (v) => {
+        const s = v === null || v === undefined ? '' : String(v);
+        return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      };
+      const header = keys.map(escape).join(',');
+      const lines = arr.map(r => keys.map(k => escape(r[k])).join(','));
+      return [header, ...lines].join('\n');
+    }
+
+    function toMarkdown(rows) {
+      const arr = Array.isArray(rows) ? rows : [rows];
+      const keySet = new Set();
+      arr.forEach(r => Object.keys(r).forEach(k => keySet.add(k)));
+      const keys = Array.from(keySet);
+      const escape = (v) => String(v === null || v === undefined ? '' : v).replace(/\|/g, '\\|');
+      const header = '| ' + keys.join(' | ') + ' |';
+      const sep = '| ' + keys.map(() => '---').join(' | ') + ' |';
+      const lines = arr.map(r => '| ' + keys.map(k => escape(r[k])).join(' | ') + ' |');
+      return [header, sep, ...lines].join('\n');
+    }
+
+    function formatOutput(data, format, minify) {
+      if (format === 'csv') return toCSV(data);
+      if (format === 'md') return toMarkdown(data);
+      return JSON.stringify(data, null, minify ? 0 : 2);
     }
 
     function detectFormat(lines) {
@@ -295,9 +492,29 @@
       document.getElementById('copyBtn').classList.add('hidden');
       document.getElementById('formatInfo').classList.add('hidden');
       document.getElementById('checkoutContainer').classList.add('hidden');
+      resetBatch();
     }
 
+    function resetBatch() {
+      batchResults = [];
+      const container = document.getElementById('batchResults');
+      container.classList.add('hidden');
+      container.innerHTML = '';
+    }
+
+    function renderOutput() {
+      if (!fullResult) return;
+      const format = document.getElementById('exportFormat').value;
+      const minify = document.getElementById('minifyToggle').checked;
+      const preview = fullResult.slice(0, 5);
+      document.getElementById('outputPreview').textContent = formatOutput(preview, format, minify);
+    }
+
+    document.getElementById('exportFormat').addEventListener('change', renderOutput);
+    document.getElementById('minifyToggle').addEventListener('change', renderOutput);
+
     function processData() {
+      resetBatch();
       const rawValue = document.getElementById('rawInput').value;
       const input = rawValue.trim();
 
@@ -307,8 +524,9 @@
       }
 
       const lines = input.split('\n').filter(l => l.trim().length > 0);
-      const format = detectFormat(lines);
-      const formatLabels = { csv: 'CSV', log: 'Log', kv: 'Key-Value', code: 'Source Code', raw: 'Plain text' };
+      const overrideRaw = document.getElementById('delimiterOverride').value;
+      const override = overrideRaw === 'tab' ? '\t' : overrideRaw;
+      const format = overrideRaw === 'auto' ? detectFormat(lines) : { type: 'csv', delim: override };
 
       switch (format.type) {
         case 'csv':
@@ -329,25 +547,76 @@
 
       sessionStorage.setItem('dpp_rawInput', rawValue);
 
-      const rowCount = Array.isArray(fullResult) ? fullResult.length : 1;
-      const preview = Array.isArray(fullResult) ? fullResult.slice(0, 5) : fullResult;
-
-      document.getElementById('outputPreview').textContent = JSON.stringify(preview, null, 2);
+      const rowCount = fullResult.length;
+      renderOutput();
 
       const formatInfo = document.getElementById('formatInfo');
-      formatInfo.textContent = Array.isArray(fullResult)
-        ? `Detected format: ${formatLabels[format.type]} · Showing ${Math.min(5, rowCount)} of ${rowCount} row${rowCount === 1 ? '' : 's'}`
-        : `Detected format: ${formatLabels[format.type]} (single record)`;
+      formatInfo.textContent = `Detected format: ${formatLabels[format.type]} · Showing ${Math.min(5, rowCount)} of ${rowCount} row${rowCount === 1 ? '' : 's'}`;
       formatInfo.classList.remove('hidden');
 
       document.getElementById('lockStatus').classList.remove('hidden');
       document.getElementById('copyBtn').classList.remove('hidden');
       document.getElementById('checkoutContainer').classList.remove('hidden');
+
+      saveHistoryEntry(rawValue, format.type);
+    }
+
+    function loadHistory() {
+      try { return JSON.parse(localStorage.getItem('dpp_history') || '[]'); } catch (e) { return []; }
+    }
+
+    function saveHistoryEntry(rawValue, formatType) {
+      const cap = isPowerUser() ? 50 : 5;
+      let history = loadHistory();
+      history.unshift({ ts: Date.now(), formatType, preview: rawValue.slice(0, 80), input: rawValue });
+      history = history.slice(0, cap);
+      try { localStorage.setItem('dpp_history', JSON.stringify(history)); } catch (e) {}
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = loadHistory();
+      const wrapper = document.getElementById('historyPanel');
+      const container = document.getElementById('historyList');
+      if (history.length === 0) {
+        wrapper.classList.add('hidden');
+        container.innerHTML = '';
+        return;
+      }
+      container.innerHTML = history.map((h, i) => `
+        <button type="button" onclick="loadHistoryEntry(${i})" class="block w-full text-left px-2 py-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+          <span class="text-[11px] text-slate-500 dark:text-slate-500">${new Date(h.ts).toLocaleString()} · ${formatLabels[h.formatType] || h.formatType}</span>
+          <div class="truncate text-slate-700 dark:text-slate-300 font-mono text-[11px]">${escapeHtml(h.preview)}</div>
+        </button>
+      `).join('');
+      const capNote = document.getElementById('historyCapNote');
+      capNote.textContent = isPowerUser()
+        ? 'Power tier: keeping your last 50 (stored only in this browser).'
+        : 'Free tier keeps your last 5 (stored only in this browser) — Power tier keeps 50.';
+      wrapper.classList.remove('hidden');
+    }
+
+    function loadHistoryEntry(i) {
+      const history = loadHistory();
+      const entry = history[i];
+      if (!entry) return;
+      document.getElementById('rawInput').value = entry.input;
+      processData();
+    }
+
+    function clearHistory() {
+      try { localStorage.removeItem('dpp_history'); } catch (e) {}
+      renderHistory();
     }
 
     function triggerCheckout() {
       sessionStorage.setItem('dpp_rawInput', document.getElementById('rawInput').value);
       window.location.href = 'https://buy.stripe.com/28EfZh5OJe0igWVeDa0ZW01';
+    }
+
+    function triggerPowerCheckout() {
+      sessionStorage.setItem('dpp_rawInput', document.getElementById('rawInput').value);
+      window.location.href = POWER_CHECKOUT_URL;
     }
 
     function unlockExport() {
@@ -359,24 +628,26 @@
       document.getElementById('downloadFullBtn').classList.remove('hidden');
     }
 
+    function unlockPower() {
+      sessionStorage.setItem('dpp_power', '1');
+      document.getElementById('powerBadge').classList.remove('hidden');
+      renderBatchResults();
+      renderHistory();
+    }
+
     function downloadFullExport() {
       if (!fullResult) return;
-      const blob = new Blob([JSON.stringify(fullResult, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'parsed-export.json';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      const format = document.getElementById('exportFormat').value;
+      const minify = document.getElementById('minifyToggle').checked;
+      downloadBlob(formatOutput(fullResult, format, minify), `parsed-export.${extFor(format)}`, mimeFor(format));
     }
 
     function restoreAfterRedirect() {
       const params = new URLSearchParams(window.location.search);
       const justPaid = params.get('paid') === '1';
+      const justWentPower = params.get('power') === '1';
 
-      if (justPaid) {
+      if (justPaid || justWentPower) {
         window.history.replaceState({}, '', window.location.pathname);
       }
 
@@ -389,6 +660,11 @@
       if (justPaid || sessionStorage.getItem('dpp_unlocked') === '1') {
         unlockExport();
       }
+      if (justWentPower || sessionStorage.getItem('dpp_power') === '1') {
+        unlockPower();
+      }
+
+      renderHistory();
     }
 
     document.addEventListener('DOMContentLoaded', restoreAfterRedirect);
