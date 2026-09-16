@@ -17,7 +17,7 @@
   <main class="max-w-4xl mx-auto px-6 py-10 flex-grow w-full space-y-8">
     <div class="space-y-2">
       <h1 class="text-3xl font-extrabold tracking-tight">Clean & Format Raw Data Instantly</h1>
-      <p class="text-slate-400 text-sm">Paste unstructured text, CSV, logs, or key:value data below. We auto-detect the format and structure it into clean JSON.</p>
+      <p class="text-slate-400 text-sm">Paste unstructured text, CSV, logs, source code, or key:value data below. We auto-detect the format and structure it into clean JSON.</p>
       <p class="text-xs text-slate-500">Free preview of the first 5 rows &middot; <span class="text-emerald-400 font-medium">$9 one-time unlock</span> for the full export.</p>
     </div>
 
@@ -92,6 +92,13 @@
         return { type: 'log', pattern: logPattern };
       }
 
+      const codeKeywords = /\b(function|def|class|return|import|export|from|const|let|var|public|private|protected|static|void|int|float|double|bool|if|else|elif|for|while|try|except|catch|finally|switch|case|break|continue|print|console\.(log|error|warn)|package|namespace|struct|interface|enum|async|await|lambda|yield|new|delete|include|require)\b/;
+      const codeSymbols = /[{};]|=>|->|::|\+\+|--|\/\/|\/\*|\*\//;
+      const codeMatches = lines.filter(l => codeKeywords.test(l) || codeSymbols.test(l)).length;
+      if (codeMatches / lines.length >= 0.4) {
+        return { type: 'code' };
+      }
+
       const kvPattern = /^\s*([\w.\-]+)\s*[:=]\s*(.+)$/;
       const kvMatches = lines.filter(l => kvPattern.test(l)).length;
       if (kvMatches / lines.length >= 0.6) {
@@ -136,6 +143,34 @@
       return lines.map((l, idx) => ({ row: idx + 1, content: l.trim() }));
     }
 
+    function splitInlineComment(line) {
+      let inSingle = false, inDouble = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === "'" && !inDouble) inSingle = !inSingle;
+        else if (ch === '"' && !inSingle) inDouble = !inDouble;
+        else if (!inSingle && !inDouble) {
+          if (ch === '#') return { code: line.slice(0, i).trim(), comment: line.slice(i + 1).trim() };
+          if (ch === '/' && line[i + 1] === '/') return { code: line.slice(0, i).trim(), comment: line.slice(i + 2).trim() };
+        }
+      }
+      return { code: line.trim(), comment: null };
+    }
+
+    function parseCode(lines) {
+      return lines.map((l, idx) => {
+        const indent = l.match(/^[ \t]*/)[0].length;
+        const { code, comment } = splitInlineComment(l);
+        return {
+          row: idx + 1,
+          indent,
+          type: code === '' ? 'comment' : 'code',
+          code,
+          comment
+        };
+      });
+    }
+
     function resetOutput() {
       fullResult = null;
       document.getElementById('outputPreview').textContent = 'Waiting for input...';
@@ -155,7 +190,7 @@
 
       const lines = input.split('\n').filter(l => l.trim().length > 0);
       const format = detectFormat(lines);
-      const formatLabels = { csv: 'CSV', log: 'Log', kv: 'Key-Value', raw: 'Plain text' };
+      const formatLabels = { csv: 'CSV', log: 'Log', kv: 'Key-Value', code: 'Source Code', raw: 'Plain text' };
 
       switch (format.type) {
         case 'csv':
@@ -163,6 +198,9 @@
           break;
         case 'log':
           fullResult = parseLog(lines, format.pattern);
+          break;
+        case 'code':
+          fullResult = parseCode(lines);
           break;
         case 'kv':
           fullResult = [parseKV(lines, format.pattern)];
