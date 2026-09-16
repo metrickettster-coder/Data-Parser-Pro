@@ -15,6 +15,12 @@
   </header>
 
   <main class="max-w-4xl mx-auto px-6 py-10 flex-grow w-full space-y-8">
+    <div class="space-y-2">
+      <h1 class="text-3xl font-extrabold tracking-tight">Clean & Format Raw Data Instantly</h1>
+      <p class="text-slate-400 text-sm">Paste unstructured text, CSV, logs, or key:value data below. We auto-detect the format and structure it into clean JSON.</p>
+      <p class="text-xs text-slate-500">Free preview of the first 5 rows &middot; <span class="text-emerald-400 font-medium">$9 one-time unlock</span> for the full export.</p>
+    </div>
+
     <div class="grid grid-cols-1 gap-6">
       <div class="space-y-2">
         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Input Data</label>
@@ -26,10 +32,11 @@
       </button>
 
       <div class="space-y-2">
-        <div class="flex justify-between items-center">
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Output Preview (First 5 Rows)</label>
+        <div class="flex justify-between items-center flex-wrap gap-1">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Output Preview</label>
           <span id="lockStatus" class="text-xs text-amber-400 hidden">Full export locked ($9 unlock)</span>
         </div>
+        <p id="formatInfo" class="text-xs text-slate-500 hidden"></p>
         <pre id="outputPreview" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-300 min-h-[120px] overflow-x-auto">Waiting for input...</pre>
       </div>
 
@@ -38,9 +45,14 @@
           <p class="font-medium">Unlock full cleaned file export (Unlimited rows)</p>
           <p class="text-xs text-slate-500">Secure one-time payment via Stripe.</p>
         </div>
-        <button onclick="triggerCheckout()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-lg transition">
-          Unlock Full Export — $9
-        </button>
+        <div class="flex gap-2 w-full sm:w-auto">
+          <button onclick="triggerCheckout()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-lg transition">
+            Unlock Full Export — $9
+          </button>
+          <button id="downloadFullBtn" onclick="downloadFullExport()" class="hidden w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-6 py-3 rounded-lg transition">
+            Download Full Export
+          </button>
+        </div>
       </div>
     </div>
   </main>
@@ -50,37 +62,205 @@
     <div class="max-w-md mx-auto">
       <h4 class="text-sm font-semibold text-slate-300 mb-1">Have an idea or feedback?</h4>
       <p class="text-xs text-slate-400 mb-4">Let me know what tools you want next.</p>
-      
-      <form action="https://formspree.io/f/xdeojqej" method="POST" class="flex flex-col sm:flex-row gap-2">
+
+      <form id="feedbackForm" action="https://formspree.io/f/xdeojqej" method="POST" class="flex flex-col sm:flex-row gap-2">
         <input type="email" name="email" placeholder="Email (optional)" class="text-xs rounded bg-slate-800 border border-slate-700 text-slate-200 px-3 py-2 flex-grow focus:outline-none focus:border-indigo-500">
         <input type="text" name="message" placeholder="Your idea..." required class="text-xs rounded bg-slate-800 border border-slate-700 text-slate-200 px-3 py-2 flex-grow focus:outline-none focus:border-indigo-500">
         <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium px-4 py-2 rounded transition">Send</button>
       </form>
-      
+      <p id="feedbackStatus" class="text-xs mt-2 hidden"></p>
+
       <p class="text-[10px] text-slate-500 mt-4">&copy; 2026 DataParser Pro. Powered by Cloudflare & Stripe.</p>
     </div>
   </footer>
 
   <script>
+    let fullResult = null;
+
+    function detectFormat(lines) {
+      const delimiters = [',', '\t', '|', ';'];
+      for (const delim of delimiters) {
+        const counts = lines.map(l => l.split(delim).length);
+        if (counts[0] > 1 && counts.every(c => c === counts[0])) {
+          return { type: 'csv', delim };
+        }
+      }
+
+      const logPattern = /^\[?(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d+)?)\]?\s*[-:]?\s*(ERROR|WARN|WARNING|INFO|DEBUG|TRACE|FATAL)?\s*[:\-]?\s*(.*)$/i;
+      const logMatches = lines.filter(l => logPattern.test(l)).length;
+      if (logMatches / lines.length >= 0.6) {
+        return { type: 'log', pattern: logPattern };
+      }
+
+      const kvPattern = /^\s*([\w.\-]+)\s*[:=]\s*(.+)$/;
+      const kvMatches = lines.filter(l => kvPattern.test(l)).length;
+      if (kvMatches / lines.length >= 0.6) {
+        return { type: 'kv', pattern: kvPattern };
+      }
+
+      return { type: 'raw' };
+    }
+
+    function parseCSV(lines, delim) {
+      const rows = lines.map(l => l.split(delim).map(c => c.trim()));
+      const looksLikeHeader = rows[0].every(c => c.length > 0 && !/^-?\d+(\.\d+)?$/.test(c));
+      const headers = looksLikeHeader ? rows[0] : rows[0].map((_, i) => `col${i + 1}`);
+      const dataRows = looksLikeHeader ? rows.slice(1) : rows;
+      return dataRows.map((cells, idx) => {
+        const obj = { row: idx + 1 };
+        headers.forEach((h, i) => { obj[h] = cells[i] ?? ''; });
+        return obj;
+      });
+    }
+
+    function parseLog(lines, pattern) {
+      return lines.map((l, idx) => {
+        const m = l.match(pattern);
+        if (m) {
+          return { row: idx + 1, timestamp: m[1] || null, level: (m[2] || '').toUpperCase() || null, message: (m[3] || '').trim() };
+        }
+        return { row: idx + 1, timestamp: null, level: null, message: l.trim() };
+      });
+    }
+
+    function parseKV(lines, pattern) {
+      return lines.reduce((obj, l, idx) => {
+        const m = l.match(pattern);
+        if (m) obj[m[1]] = m[2].trim();
+        else obj[`unparsed_${idx + 1}`] = l.trim();
+        return obj;
+      }, {});
+    }
+
+    function parseRaw(lines) {
+      return lines.map((l, idx) => ({ row: idx + 1, content: l.trim() }));
+    }
+
+    function resetOutput() {
+      fullResult = null;
+      document.getElementById('outputPreview').textContent = 'Waiting for input...';
+      document.getElementById('lockStatus').classList.add('hidden');
+      document.getElementById('formatInfo').classList.add('hidden');
+      document.getElementById('checkoutContainer').classList.add('hidden');
+    }
+
     function processData() {
-      const input = document.getElementById('rawInput').value.trim();
-      if (!input) return;
+      const rawValue = document.getElementById('rawInput').value;
+      const input = rawValue.trim();
 
-      const lines = input.split('\n');
-      const parsed = lines.slice(0, 5).map((line, idx) => ({
-        row: idx + 1,
-        content: line.trim(),
-        status: "parsed"
-      }));
+      if (!input) {
+        resetOutput();
+        return;
+      }
 
-      document.getElementById('outputPreview').textContent = JSON.stringify(parsed, null, 2);
+      const lines = input.split('\n').filter(l => l.trim().length > 0);
+      const format = detectFormat(lines);
+      const formatLabels = { csv: 'CSV', log: 'Log', kv: 'Key-Value', raw: 'Plain text' };
+
+      switch (format.type) {
+        case 'csv':
+          fullResult = parseCSV(lines, format.delim);
+          break;
+        case 'log':
+          fullResult = parseLog(lines, format.pattern);
+          break;
+        case 'kv':
+          fullResult = [parseKV(lines, format.pattern)];
+          break;
+        default:
+          fullResult = parseRaw(lines);
+      }
+
+      sessionStorage.setItem('dpp_rawInput', rawValue);
+
+      const rowCount = Array.isArray(fullResult) ? fullResult.length : 1;
+      const preview = Array.isArray(fullResult) ? fullResult.slice(0, 5) : fullResult;
+
+      document.getElementById('outputPreview').textContent = JSON.stringify(preview, null, 2);
+
+      const formatInfo = document.getElementById('formatInfo');
+      formatInfo.textContent = Array.isArray(fullResult)
+        ? `Detected format: ${formatLabels[format.type]} · Showing ${Math.min(5, rowCount)} of ${rowCount} row${rowCount === 1 ? '' : 's'}`
+        : `Detected format: ${formatLabels[format.type]} (single record)`;
+      formatInfo.classList.remove('hidden');
+
       document.getElementById('lockStatus').classList.remove('hidden');
       document.getElementById('checkoutContainer').classList.remove('hidden');
     }
 
     function triggerCheckout() {
+      sessionStorage.setItem('dpp_rawInput', document.getElementById('rawInput').value);
       window.location.href = 'https://buy.stripe.com/28EfZh5OJe0igWVeDa0ZW01';
+    }
+
+    function unlockExport() {
+      sessionStorage.setItem('dpp_unlocked', '1');
+      document.getElementById('lockStatus').textContent = 'Unlocked — full export available';
+      document.getElementById('lockStatus').classList.remove('text-amber-400');
+      document.getElementById('lockStatus').classList.add('text-emerald-400', 'hidden');
+      document.getElementById('lockStatus').classList.remove('hidden');
+      document.getElementById('downloadFullBtn').classList.remove('hidden');
+    }
+
+    function downloadFullExport() {
+      if (!fullResult) return;
+      const blob = new Blob([JSON.stringify(fullResult, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'parsed-export.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function restoreAfterRedirect() {
+      const params = new URLSearchParams(window.location.search);
+      const justPaid = params.get('paid') === '1';
+
+      if (justPaid) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+
+      const savedInput = sessionStorage.getItem('dpp_rawInput');
+      if (savedInput && (justPaid || sessionStorage.getItem('dpp_unlocked') === '1')) {
+        document.getElementById('rawInput').value = savedInput;
+        processData();
+      }
+
+      if (justPaid || sessionStorage.getItem('dpp_unlocked') === '1') {
+        unlockExport();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', restoreAfterRedirect);
+
+    document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const statusEl = document.getElementById('feedbackStatus');
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+        statusEl.classList.remove('hidden', 'text-red-400', 'text-emerald-400');
+        if (res.ok) {
+          statusEl.textContent = 'Thanks — got it!';
+          statusEl.classList.add('text-emerald-400');
+          form.reset();
+        } else {
+          statusEl.textContent = 'Something went wrong — please try again.';
+          statusEl.classList.add('text-red-400');
         }
-    </script>
+      } catch (err) {
+        statusEl.classList.remove('hidden');
+        statusEl.textContent = 'Something went wrong — please try again.';
+        statusEl.classList.add('text-red-400');
+      }
+    });
+  </script>
 </body>
 </html>
