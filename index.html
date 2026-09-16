@@ -37,7 +37,7 @@
       <h1 class="text-3xl font-extrabold tracking-tight">Clean & Format Raw Data Instantly</h1>
       <p class="text-slate-600 dark:text-slate-400 text-sm">Paste unstructured text, CSV, logs, source code, or key:value data below. We auto-detect the format and structure it into clean JSON, CSV, or Markdown.</p>
       <p class="text-xs text-slate-600 dark:text-slate-500">Free preview of the first 5 rows &middot; <span class="text-emerald-600 dark:text-emerald-400 font-medium">$9 one-time unlock</span> for a single full export.</p>
-      <p class="text-xs text-slate-600 dark:text-slate-500">Need batch files, bulk .zip export, and unlimited saved history? <button type="button" onclick="triggerPowerCheckout()" class="text-violet-600 dark:text-violet-400 font-medium hover:underline">Go Power — $4.99/mo</button></p>
+      <p id="powerCta" class="text-xs text-slate-600 dark:text-slate-500">Need batch files, bulk .zip export, and unlimited saved history? <button type="button" onclick="triggerPowerCheckout()" class="text-violet-600 dark:text-violet-400 font-medium hover:underline">Go Power — $4.99/mo</button></p>
     </div>
 
     <div class="grid grid-cols-1 gap-6">
@@ -156,6 +156,7 @@
     // TODO: create a recurring Price + Payment Link for the Power tier in your
     // Stripe dashboard, then replace this placeholder with that link.
     const POWER_CHECKOUT_URL = 'https://buy.stripe.com/REPLACE_WITH_POWER_SUBSCRIPTION_LINK';
+    const POWER_CHECKOUT_READY = !POWER_CHECKOUT_URL.includes('REPLACE_WITH');
 
     const SUN_ICON = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1.5m0 15V21m8.25-9h-1.5m-15 0H3m14.36-6.36l-1.06 1.06M6.7 17.3l-1.06 1.06m0-12.72l1.06 1.06M17.3 17.3l1.06 1.06M12 7.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"/></svg>';
     const MOON_ICON = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>';
@@ -247,9 +248,14 @@
           <button onclick="downloadBatchFile(${i})" class="text-indigo-600 dark:text-indigo-400 hover:underline shrink-0">Download</button>
         </div>
       `).join('');
-      const zipControl = isPowerUser()
-        ? `<button onclick="downloadBatchZip()" class="mt-3 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 rounded-lg transition text-sm">Download All as .zip</button>`
-        : `<div class="mt-3 text-xs text-slate-500 dark:text-slate-400">Bulk .zip download is a Power tier feature. <button type="button" onclick="triggerPowerCheckout()" class="text-violet-600 dark:text-violet-400 font-medium hover:underline">Go Power</button> to unlock it.</div>`;
+      let zipControl;
+      if (isPowerUser()) {
+        zipControl = `<button onclick="downloadBatchZip()" class="mt-3 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 rounded-lg transition text-sm">Download All as .zip</button>`;
+      } else if (POWER_CHECKOUT_READY) {
+        zipControl = `<div class="mt-3 text-xs text-slate-500 dark:text-slate-400">Bulk .zip download is a Power tier feature. <button type="button" onclick="triggerPowerCheckout()" class="text-violet-600 dark:text-violet-400 font-medium hover:underline">Go Power</button> to unlock it.</div>`;
+      } else {
+        zipControl = `<div class="mt-3 text-xs text-slate-500 dark:text-slate-400">Bulk .zip download is a Power tier feature (coming soon). Use the per-file Download links above for now.</div>`;
+      }
       container.innerHTML = `<p class="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2">Batch Results (${batchResults.length} files)</p>${rows}${zipControl}`;
       container.classList.remove('hidden');
     }
@@ -615,8 +621,14 @@
     }
 
     function triggerPowerCheckout() {
+      if (!POWER_CHECKOUT_READY) return;
       sessionStorage.setItem('dpp_rawInput', document.getElementById('rawInput').value);
       window.location.href = POWER_CHECKOUT_URL;
+    }
+
+    if (!POWER_CHECKOUT_READY) {
+      const cta = document.getElementById('powerCta');
+      if (cta) cta.classList.add('hidden');
     }
 
     function unlockExport() {
