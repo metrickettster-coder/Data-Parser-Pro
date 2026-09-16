@@ -63,7 +63,12 @@
     <div class="space-y-2">
       <h1 class="text-3xl font-extrabold tracking-tight">Clean & Format Raw Data Instantly</h1>
       <p class="text-slate-600 dark:text-slate-400 text-sm">Paste unstructured text, CSV, logs, source code, or key:value data below. We auto-detect the format and structure it into clean JSON, CSV, or Markdown.</p>
-      <p class="text-xs text-slate-600 dark:text-slate-400">Free preview of the first 5 rows &middot; <span class="text-emerald-700 dark:text-emerald-400 font-medium">$9 one-time unlock</span> for a single full export.</p>
+      <p class="text-xs text-slate-600 dark:text-slate-400">Free preview of the first 5 rows &middot; <span class="text-emerald-700 dark:text-emerald-400 font-medium">$9 one-time unlock</span> for a single full export.
+        <span class="relative inline-flex group align-middle">
+          <button type="button" tabindex="0" aria-label="Help" aria-describedby="tip-unlock" class="w-4 h-4 flex items-center justify-center rounded-full border border-slate-400 dark:border-slate-500 text-[10px] leading-none text-slate-500 dark:text-slate-400 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-help">i</button>
+          <span id="tip-unlock" role="tooltip" class="pointer-events-none absolute z-20 hidden group-hover:block group-focus-within:block bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-60 rounded bg-slate-900 dark:bg-slate-700 text-white text-[11px] leading-snug p-2 shadow-lg">One payment unlocks unlimited full exports for the rest of this browser session — you won't be asked to pay again until you close the tab or clear site data.</span>
+        </span>
+      </p>
       <p id="powerCta" class="text-xs text-slate-600 dark:text-slate-400">Need batch files, bulk .zip export, and unlimited saved history? <button type="button" onclick="triggerPowerCheckout()" class="text-violet-600 dark:text-violet-400 font-medium hover:underline">Go Power — $4.99/mo</button></p>
     </div>
 
@@ -79,6 +84,10 @@
           <label for="fileUpload" class="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 rounded border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300">
             Upload File(s)
           </label>
+          <span class="relative inline-flex group">
+            <button type="button" tabindex="0" aria-label="Help" aria-describedby="tip-upload" class="w-4 h-4 flex items-center justify-center rounded-full border border-slate-400 dark:border-slate-500 text-[10px] leading-none text-slate-500 dark:text-slate-400 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-help">i</button>
+            <span id="tip-upload" role="tooltip" class="pointer-events-none absolute z-20 hidden group-hover:block group-focus-within:block bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-56 rounded bg-slate-900 dark:bg-slate-700 text-white text-[11px] leading-snug p-2 shadow-lg">Select or drop 2+ files to batch-process them together, with per-file downloads and a combined .zip on the Power tier.</span>
+          </span>
           <input id="fileUpload" type="file" accept=".txt,.csv,.tsv,.log,.json,.md" multiple class="hidden">
           <span id="fileName" class="text-slate-500 dark:text-slate-400 truncate" aria-live="polite"></span>
           <span class="text-slate-400 dark:text-slate-600">|</span>
@@ -97,11 +106,19 @@
             <option value="|">Pipe</option>
             <option value=";">Semicolon</option>
           </select>
+          <span class="relative inline-flex group">
+            <button type="button" tabindex="0" aria-label="Help" aria-describedby="tip-delimiter" class="w-4 h-4 flex items-center justify-center rounded-full border border-slate-400 dark:border-slate-500 text-[10px] leading-none text-slate-500 dark:text-slate-400 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-help">i</button>
+            <span id="tip-delimiter" role="tooltip" class="pointer-events-none absolute z-20 hidden group-hover:block group-focus-within:block bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-56 rounded bg-slate-900 dark:bg-slate-700 text-white text-[11px] leading-snug p-2 shadow-lg">Leave on Auto-detect unless your CSV/TSV uses an unusual column separator — set this to force it.</span>
+          </span>
           <span class="text-slate-400 dark:text-slate-600">|</span>
           <label class="text-slate-500 dark:text-slate-400 flex items-center gap-1 cursor-pointer">
             <input id="minifyToggle" type="checkbox" class="rounded">
             Minify JSON
           </label>
+          <span class="relative inline-flex group">
+            <button type="button" tabindex="0" aria-label="Help" aria-describedby="tip-minify" class="w-4 h-4 flex items-center justify-center rounded-full border border-slate-400 dark:border-slate-500 text-[10px] leading-none text-slate-500 dark:text-slate-400 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-help">i</button>
+            <span id="tip-minify" role="tooltip" class="pointer-events-none absolute z-20 hidden group-hover:block group-focus-within:block bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-52 rounded bg-slate-900 dark:bg-slate-700 text-white text-[11px] leading-snug p-2 shadow-lg">Strips indentation and line breaks from JSON output to make the file smaller.</span>
+          </span>
           <span class="text-slate-400 dark:text-slate-600 hidden sm:inline">|</span>
           <span class="text-slate-500 dark:text-slate-400 hidden sm:inline"><kbd class="px-1 py-0.5 border border-slate-300 dark:border-slate-700 rounded text-[10px]">Ctrl/⌘+Enter</kbd> to process &middot; <kbd class="px-1 py-0.5 border border-slate-300 dark:border-slate-700 rounded text-[10px]">Esc</kbd> to clear</span>
         </div>
@@ -122,6 +139,10 @@
               <option value="csv">CSV</option>
               <option value="md">Markdown</option>
             </select>
+            <span class="relative inline-flex group">
+              <button type="button" tabindex="0" aria-label="Help" aria-describedby="tip-export" class="w-4 h-4 flex items-center justify-center rounded-full border border-slate-400 dark:border-slate-500 text-[10px] leading-none text-slate-500 dark:text-slate-400 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-help">i</button>
+              <span id="tip-export" role="tooltip" class="pointer-events-none absolute z-20 hidden group-hover:block group-focus-within:block bottom-full right-0 mb-1.5 w-56 rounded bg-slate-900 dark:bg-slate-700 text-white text-[11px] leading-snug p-2 shadow-lg">Changes the format used for the preview, Copy, and Download. CSV/Markdown work best with row-style data (CSV, Log, Source Code).</span>
+            </span>
             <button id="copyBtn" onclick="copyOutput()" class="hidden text-xs text-indigo-600 dark:text-indigo-400 hover:underline" aria-live="polite">Copy</button>
             <span id="lockStatus" class="text-xs text-amber-700 dark:text-amber-400 hidden" role="status" aria-live="polite">Full export locked ($9 unlock)</span>
           </div>
