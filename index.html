@@ -52,7 +52,10 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap justify-between items-center gap-2">
       <span class="font-bold text-lg tracking-tight">DataParser <span class="text-indigo-600 dark:text-indigo-400">Pro</span></span>
       <div class="flex items-center gap-2">
-        <span id="powerBadge" class="hidden text-xs bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950 dark:text-violet-300 dark:border-violet-800/50 px-3 py-1 rounded-full border">⚡ Power</span>
+        <span class="relative inline-flex group">
+          <button id="powerBadge" type="button" onclick="manageSubscription()" aria-describedby="tip-manage" class="hidden text-xs bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-950 dark:text-violet-300 dark:border-violet-800/50 px-3 py-1 rounded-full border cursor-pointer hover:bg-violet-100 dark:hover:bg-violet-900">⚡ Power</button>
+          <span id="tip-manage" role="tooltip" class="pointer-events-none absolute z-20 hidden group-hover:block group-focus-within:block top-full right-0 mt-1.5 w-56 rounded bg-slate-900 dark:bg-slate-700 text-white text-[11px] leading-snug p-2 shadow-lg">Manage or cancel anytime via the link in your Stripe receipt email, or tap this badge if a subscription portal is set up.</span>
+        </span>
         <span class="text-xs bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950 dark:text-indigo-300 px-3 py-1 rounded-full border dark:border-indigo-800/50">Zero-Config Utility</span>
         <button id="themeToggle" type="button" aria-label="Toggle light/dark theme" class="w-9 h-9 shrink-0 flex items-center justify-center rounded-full border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition text-slate-700 dark:text-slate-200"></button>
       </div>
@@ -192,7 +195,7 @@
       </form>
       <p id="feedbackStatus" class="text-xs mt-2 hidden" role="status" aria-live="polite"></p>
 
-      <p class="text-[10px] text-slate-500 mt-4">&copy; 2026 DataParser Pro. Powered by Cloudflare & Stripe.</p>
+      <p class="text-[10px] text-slate-500 mt-4">&copy; 2026 DataParser Pro. Powered by Cloudflare & Stripe. <a href="/terms.html" class="hover:underline">Terms</a> &middot; <a href="/privacy.html" class="hover:underline">Privacy</a></p>
     </div>
   </footer>
 
@@ -206,6 +209,19 @@
     // Stripe dashboard, then replace this placeholder with that link.
     const POWER_CHECKOUT_URL = 'https://buy.stripe.com/14A28rcd73lEayxgLi0ZW02';
     const POWER_CHECKOUT_READY = !POWER_CHECKOUT_URL.includes('REPLACE_WITH');
+
+    // TODO: activate Stripe's Customer Portal (Settings -> Billing -> Customer
+    // portal in the Stripe dashboard) and paste its shareable login link here
+    // so the Power badge can send subscribers straight to self-service
+    // cancellation instead of relying on the receipt-email fallback.
+    const STRIPE_CUSTOMER_PORTAL_URL = 'https://billing.stripe.com/p/login/REPLACE_WITH_CUSTOMER_PORTAL_LINK';
+    const STRIPE_PORTAL_READY = !STRIPE_CUSTOMER_PORTAL_URL.includes('REPLACE_WITH');
+
+    function manageSubscription() {
+      if (STRIPE_PORTAL_READY) {
+        window.location.href = STRIPE_CUSTOMER_PORTAL_URL;
+      }
+    }
 
     const SUN_ICON = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" aria-hidden="true" focusable="false" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1.5m0 15V21m8.25-9h-1.5m-15 0H3m14.36-6.36l-1.06 1.06M6.7 17.3l-1.06 1.06m0-12.72l1.06 1.06M17.3 17.3l1.06 1.06M12 7.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"/></svg>';
     const MOON_ICON = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" aria-hidden="true" focusable="false" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>';
