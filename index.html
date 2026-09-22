@@ -3,7 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DataParser Pro | Instant Text & Log Cleaner</title>
+  <title>DataParser Pro — Free Online CSV, JSON & Log File Parser</title>
+  <meta name="description" content="Paste or upload messy CSV, JSON, log files, or source code and instantly clean, structure, and export them as JSON, CSV, or Markdown. Auto-detects format, runs 100% in your browser — no signup, nothing uploaded to a server.">
+  <link rel="canonical" href="https://data-parser-pro.pages.dev/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DataParser Pro">
+  <meta property="og:title" content="DataParser Pro — Free Online CSV, JSON & Log File Parser">
+  <meta property="og:description" content="Paste or upload messy CSV, JSON, log files, or source code and instantly clean, structure, and export them as JSON, CSV, or Markdown. Runs entirely in your browser.">
+  <meta property="og:url" content="https://data-parser-pro.pages.dev/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="DataParser Pro — Free Online CSV, JSON & Log File Parser">
+  <meta name="twitter:description" content="Clean and structure messy CSV, JSON, log, or code data instantly, right in your browser. Free preview, no signup.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%234f46e5'/%3E%3Ctext x='50' y='68' font-size='58' font-family='monospace' font-weight='bold' fill='white' text-anchor='middle'%3E%7B%7D%3C/text%3E%3C/svg%3E">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "DataParser Pro",
+    "url": "https://data-parser-pro.pages.dev/",
+    "description": "Free online tool that auto-detects and cleans messy CSV, JSON, log files, key:value data, or source code, and exports the structured result as JSON, CSV, or Markdown.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any (runs in any modern web browser)",
+    "offers": [
+      { "@type": "Offer", "name": "Free preview", "price": "0", "priceCurrency": "USD" },
+      { "@type": "Offer", "name": "One-time full export unlock", "price": "9.00", "priceCurrency": "USD" },
+      { "@type": "Offer", "name": "Power subscription", "price": "4.99", "priceCurrency": "USD", "billingIncrement": "P1M" }
+    ]
+  }
+  </script>
   <script>
     (function () {
       try {
@@ -36,8 +63,13 @@
     <div class="space-y-2">
       <h1 class="text-3xl font-extrabold tracking-tight">Clean & Format Raw Data Instantly</h1>
       <p class="text-slate-600 dark:text-slate-400 text-sm">Paste unstructured text, CSV, logs, source code, or key:value data below. We auto-detect the format and structure it into clean JSON, CSV, or Markdown.</p>
-      <p class="text-xs text-slate-600 dark:text-slate-500">Free preview of the first 5 rows &middot; <span class="text-emerald-600 dark:text-emerald-400 font-medium">$9 one-time unlock</span> for a single full export.</p>
-      <p id="powerCta" class="text-xs text-slate-600 dark:text-slate-500">Need batch files, bulk .zip export, and unlimited saved history? <button type="button" onclick="triggerPowerCheckout()" class="text-violet-600 dark:text-violet-400 font-medium hover:underline">Go Power — $4.99/mo</button></p>
+      <p class="text-xs text-slate-600 dark:text-slate-400">Free preview of the first 5 rows &middot; <span class="text-emerald-700 dark:text-emerald-400 font-medium">$9 one-time unlock</span> for a single full export.
+        <span class="relative inline-flex group align-middle">
+          <button type="button" tabindex="0" aria-label="Help" aria-describedby="tip-unlock" class="w-4 h-4 flex items-center justify-center rounded-full border border-slate-400 dark:border-slate-500 text-[10px] leading-none text-slate-500 dark:text-slate-400 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-help">i</button>
+          <span id="tip-unlock" role="tooltip" class="pointer-events-none absolute z-20 hidden group-hover:block group-focus-within:block bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-60 rounded bg-slate-900 dark:bg-slate-700 text-white text-[11px] leading-snug p-2 shadow-lg">One payment unlocks unlimited full exports for the rest of this browser session — you won't be asked to pay again until you close the tab or clear site data.</span>
+        </span>
+      </p>
+      <p id="powerCta" class="text-xs text-slate-600 dark:text-slate-400">Need batch files, bulk .zip export, and unlimited saved history? <button type="button" onclick="triggerPowerCheckout()" class="text-violet-600 dark:text-violet-400 font-medium hover:underline">Go Power — $4.99/mo</button></p>
     </div>
 
     <div class="grid grid-cols-1 gap-6">
@@ -52,8 +84,12 @@
           <label for="fileUpload" class="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 rounded border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition text-slate-600 dark:text-slate-300">
             Upload File(s)
           </label>
+          <span class="relative inline-flex group">
+            <button type="button" tabindex="0" aria-label="Help" aria-describedby="tip-upload" class="w-4 h-4 flex items-center justify-center rounded-full border border-slate-400 dark:border-slate-500 text-[10px] leading-none text-slate-500 dark:text-slate-400 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-help">i</button>
+            <span id="tip-upload" role="tooltip" class="pointer-events-none absolute z-20 hidden group-hover:block group-focus-within:block bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-56 rounded bg-slate-900 dark:bg-slate-700 text-white text-[11px] leading-snug p-2 shadow-lg">Select or drop 2+ files to batch-process them together, with per-file downloads and a combined .zip on the Power tier.</span>
+          </span>
           <input id="fileUpload" type="file" accept=".txt,.csv,.tsv,.log,.json,.md" multiple class="hidden">
-          <span id="fileName" class="text-slate-500 dark:text-slate-500 truncate"></span>
+          <span id="fileName" class="text-slate-500 dark:text-slate-400 truncate" aria-live="polite"></span>
           <span class="text-slate-400 dark:text-slate-600">|</span>
           <span class="text-slate-500 dark:text-slate-400">Try an example:</span>
           <button type="button" onclick="loadSample('csv')" class="text-indigo-600 dark:text-indigo-400 hover:underline">CSV</button>
@@ -62,7 +98,7 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-3 text-xs pt-1">
-          <label class="text-slate-500 dark:text-slate-400">Delimiter:</label>
+          <label for="delimiterOverride" class="text-slate-500 dark:text-slate-400">Delimiter:</label>
           <select id="delimiterOverride" class="bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-slate-700 dark:text-slate-300">
             <option value="auto">Auto-detect</option>
             <option value=",">Comma</option>
@@ -70,15 +106,23 @@
             <option value="|">Pipe</option>
             <option value=";">Semicolon</option>
           </select>
+          <span class="relative inline-flex group">
+            <button type="button" tabindex="0" aria-label="Help" aria-describedby="tip-delimiter" class="w-4 h-4 flex items-center justify-center rounded-full border border-slate-400 dark:border-slate-500 text-[10px] leading-none text-slate-500 dark:text-slate-400 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-help">i</button>
+            <span id="tip-delimiter" role="tooltip" class="pointer-events-none absolute z-20 hidden group-hover:block group-focus-within:block bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-56 rounded bg-slate-900 dark:bg-slate-700 text-white text-[11px] leading-snug p-2 shadow-lg">Leave on Auto-detect unless your CSV/TSV uses an unusual column separator — set this to force it.</span>
+          </span>
           <span class="text-slate-400 dark:text-slate-600">|</span>
           <label class="text-slate-500 dark:text-slate-400 flex items-center gap-1 cursor-pointer">
             <input id="minifyToggle" type="checkbox" class="rounded">
             Minify JSON
           </label>
+          <span class="relative inline-flex group">
+            <button type="button" tabindex="0" aria-label="Help" aria-describedby="tip-minify" class="w-4 h-4 flex items-center justify-center rounded-full border border-slate-400 dark:border-slate-500 text-[10px] leading-none text-slate-500 dark:text-slate-400 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-help">i</button>
+            <span id="tip-minify" role="tooltip" class="pointer-events-none absolute z-20 hidden group-hover:block group-focus-within:block bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-52 rounded bg-slate-900 dark:bg-slate-700 text-white text-[11px] leading-snug p-2 shadow-lg">Strips indentation and line breaks from JSON output to make the file smaller.</span>
+          </span>
           <span class="text-slate-400 dark:text-slate-600 hidden sm:inline">|</span>
           <span class="text-slate-500 dark:text-slate-400 hidden sm:inline"><kbd class="px-1 py-0.5 border border-slate-300 dark:border-slate-700 rounded text-[10px]">Ctrl/⌘+Enter</kbd> to process &middot; <kbd class="px-1 py-0.5 border border-slate-300 dark:border-slate-700 rounded text-[10px]">Esc</kbd> to clear</span>
         </div>
-        <p class="text-[11px] text-slate-500 dark:text-slate-500">Runs 100% in your browser &mdash; nothing is uploaded or stored on a server.</p>
+        <p class="text-[11px] text-slate-500 dark:text-slate-400">Runs 100% in your browser &mdash; nothing is uploaded or stored on a server.</p>
       </div>
 
       <button onclick="processData()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-3 rounded-lg transition shadow-lg shadow-indigo-600/20">
@@ -89,20 +133,25 @@
         <div class="flex justify-between items-center flex-wrap gap-2">
           <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400">Output Preview</label>
           <div class="flex items-center gap-3">
+            <label for="exportFormat" class="sr-only">Export format</label>
             <select id="exportFormat" class="text-xs bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded px-2 py-1 text-slate-700 dark:text-slate-300">
               <option value="json">JSON</option>
               <option value="csv">CSV</option>
               <option value="md">Markdown</option>
             </select>
-            <button id="copyBtn" onclick="copyOutput()" class="hidden text-xs text-indigo-600 dark:text-indigo-400 hover:underline">Copy</button>
-            <span id="lockStatus" class="text-xs text-amber-600 dark:text-amber-400 hidden">Full export locked ($9 unlock)</span>
+            <span class="relative inline-flex group">
+              <button type="button" tabindex="0" aria-label="Help" aria-describedby="tip-export" class="w-4 h-4 flex items-center justify-center rounded-full border border-slate-400 dark:border-slate-500 text-[10px] leading-none text-slate-500 dark:text-slate-400 hover:border-indigo-500 hover:text-indigo-600 dark:hover:text-indigo-400 cursor-help">i</button>
+              <span id="tip-export" role="tooltip" class="pointer-events-none absolute z-20 hidden group-hover:block group-focus-within:block bottom-full right-0 mb-1.5 w-56 rounded bg-slate-900 dark:bg-slate-700 text-white text-[11px] leading-snug p-2 shadow-lg">Changes the format used for the preview, Copy, and Download. CSV/Markdown work best with row-style data (CSV, Log, Source Code).</span>
+            </span>
+            <button id="copyBtn" onclick="copyOutput()" class="hidden text-xs text-indigo-600 dark:text-indigo-400 hover:underline" aria-live="polite">Copy</button>
+            <span id="lockStatus" class="text-xs text-amber-700 dark:text-amber-400 hidden" role="status" aria-live="polite">Full export locked ($9 unlock)</span>
           </div>
         </div>
-        <p id="formatInfo" class="text-xs text-slate-600 dark:text-slate-500 hidden"></p>
+        <p id="formatInfo" class="text-xs text-slate-600 dark:text-slate-400 hidden" role="status" aria-live="polite"></p>
         <pre id="outputPreview" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4 font-mono text-xs text-slate-700 dark:text-slate-300 min-h-[120px] overflow-x-auto">Waiting for input...</pre>
       </div>
 
-      <div id="batchResults" class="hidden bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4"></div>
+      <div id="batchResults" class="hidden bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg p-4" role="status" aria-live="polite"></div>
 
       <div id="historyPanel" class="hidden space-y-1">
         <div class="flex justify-between items-center">
@@ -110,16 +159,16 @@
           <button type="button" onclick="clearHistory()" class="text-xs text-slate-500 dark:text-slate-400 hover:underline">Clear history</button>
         </div>
         <div id="historyList" class="max-h-40 overflow-y-auto border border-slate-200 dark:border-slate-800 rounded-lg divide-y divide-slate-200 dark:divide-slate-800"></div>
-        <p id="historyCapNote" class="text-[11px] text-slate-500 dark:text-slate-500"></p>
+        <p id="historyCapNote" class="text-[11px] text-slate-500 dark:text-slate-400"></p>
       </div>
 
       <div id="checkoutContainer" class="hidden pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="text-sm text-slate-700 dark:text-slate-300">
           <p class="font-medium">Unlock full cleaned file export (Unlimited rows)</p>
-          <p class="text-xs text-slate-600 dark:text-slate-500">Secure one-time payment via Stripe.</p>
+          <p class="text-xs text-slate-600 dark:text-slate-400">Secure one-time payment via Stripe.</p>
         </div>
         <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <button id="oneTimeCheckoutBtn" onclick="triggerCheckout()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-6 py-3 rounded-lg transition">
+          <button id="oneTimeCheckoutBtn" onclick="triggerCheckout()" class="w-full sm:w-auto bg-emerald-700 hover:bg-emerald-600 text-white font-medium px-6 py-3 rounded-lg transition">
             Unlock Full Export — $9
           </button>
           <button id="downloadFullBtn" onclick="downloadFullExport()" class="hidden w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white font-medium px-6 py-3 rounded-lg transition">
@@ -133,7 +182,7 @@
   <!-- Compact Footer Feedback Box -->
   <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 py-8 px-4 sm:px-6 text-center">
     <div class="max-w-md mx-auto">
-      <h4 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Have an idea or feedback?</h4>
+      <h2 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Have an idea or feedback?</h2>
       <p class="text-xs text-slate-600 dark:text-slate-400 mb-4">Let me know what tools you want next.</p>
 
       <form id="feedbackForm" action="https://formspree.io/f/xdeojqej" method="POST" class="flex flex-col sm:flex-row gap-2">
@@ -141,7 +190,7 @@
         <input type="text" name="message" placeholder="Your idea..." required class="text-base sm:text-xs rounded bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-slate-200 px-3 py-2.5 sm:py-2 flex-grow focus:outline-none focus:border-indigo-500">
         <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm sm:text-xs font-medium px-4 py-2.5 sm:py-2 rounded transition">Send</button>
       </form>
-      <p id="feedbackStatus" class="text-xs mt-2 hidden"></p>
+      <p id="feedbackStatus" class="text-xs mt-2 hidden" role="status" aria-live="polite"></p>
 
       <p class="text-[10px] text-slate-500 mt-4">&copy; 2026 DataParser Pro. Powered by Cloudflare & Stripe.</p>
     </div>
@@ -158,8 +207,8 @@
     const POWER_CHECKOUT_URL = 'https://buy.stripe.com/14A28rcd73lEayxgLi0ZW02';
     const POWER_CHECKOUT_READY = !POWER_CHECKOUT_URL.includes('REPLACE_WITH');
 
-    const SUN_ICON = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1.5m0 15V21m8.25-9h-1.5m-15 0H3m14.36-6.36l-1.06 1.06M6.7 17.3l-1.06 1.06m0-12.72l1.06 1.06M17.3 17.3l1.06 1.06M12 7.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"/></svg>';
-    const MOON_ICON = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>';
+    const SUN_ICON = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" aria-hidden="true" focusable="false" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1.5m0 15V21m8.25-9h-1.5m-15 0H3m14.36-6.36l-1.06 1.06M6.7 17.3l-1.06 1.06m0-12.72l1.06 1.06M17.3 17.3l1.06 1.06M12 7.5a4.5 4.5 0 100 9 4.5 4.5 0 000-9z"/></svg>';
+    const MOON_ICON = '<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" aria-hidden="true" focusable="false" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>';
 
     const SAMPLES = {
       csv: 'name,age,city\nAlice,30,NYC\nBob,25,LA\nCarla,35,SF',
@@ -210,29 +259,60 @@
       reader.readAsText(file);
     }
 
+    function parseBatchText(filename, text) {
+      const trimmed = text.trim();
+      if (!trimmed) return null;
+      const lines = trimmed.split('\n').filter(l => l.trim().length > 0);
+      const overrideRaw = document.getElementById('delimiterOverride').value;
+      const override = overrideRaw === 'tab' ? '\t' : overrideRaw;
+      const format = overrideRaw === 'auto' ? detectFormat(lines) : { type: 'csv', delim: override };
+      let data;
+      switch (format.type) {
+        case 'csv': data = parseCSV(lines, format.delim); break;
+        case 'log': data = parseLog(lines, format.pattern); break;
+        case 'code': data = parseCode(lines); break;
+        case 'kv': data = [parseKV(lines, format.pattern)]; break;
+        default: data = parseRaw(lines);
+      }
+      return { filename, formatType: format.type, data };
+    }
+
+    let skippedBatchFiles = 0;
+
     async function loadBatch(fileList) {
       resetOutput();
       const files = Array.from(fileList);
       document.getElementById('fileName').textContent = `${files.length} files selected`;
+      const rawFiles = [];
       const results = [];
+      skippedBatchFiles = 0;
       for (const file of files) {
         const text = await file.text();
-        const trimmed = text.trim();
-        if (!trimmed) continue;
-        const lines = trimmed.split('\n').filter(l => l.trim().length > 0);
-        const format = detectFormat(lines);
-        let data;
-        switch (format.type) {
-          case 'csv': data = parseCSV(lines, format.delim); break;
-          case 'log': data = parseLog(lines, format.pattern); break;
-          case 'code': data = parseCode(lines); break;
-          case 'kv': data = [parseKV(lines, format.pattern)]; break;
-          default: data = parseRaw(lines);
-        }
-        results.push({ filename: file.name, formatType: format.type, data });
+        rawFiles.push({ filename: file.name, text });
+        const entry = parseBatchText(file.name, text);
+        if (entry) results.push(entry);
+        else skippedBatchFiles++;
       }
       batchResults = results;
+      try { sessionStorage.setItem('dpp_batchFiles', JSON.stringify(rawFiles)); } catch (e) {}
       renderBatchResults();
+    }
+
+    function restoreBatch() {
+      const saved = sessionStorage.getItem('dpp_batchFiles');
+      if (!saved) return false;
+      let rawFiles;
+      try { rawFiles = JSON.parse(saved); } catch (e) { return false; }
+      if (!Array.isArray(rawFiles) || rawFiles.length === 0) return false;
+      document.getElementById('fileName').textContent = `${rawFiles.length} files selected`;
+      skippedBatchFiles = 0;
+      batchResults = rawFiles.map(f => {
+        const entry = parseBatchText(f.filename, f.text);
+        if (!entry) skippedBatchFiles++;
+        return entry;
+      }).filter(Boolean);
+      renderBatchResults();
+      return true;
     }
 
     function renderBatchResults() {
@@ -256,7 +336,10 @@
       } else {
         zipControl = `<div class="mt-3 text-xs text-slate-500 dark:text-slate-400">Bulk .zip download is a Power tier feature (coming soon). Use the per-file Download links above for now.</div>`;
       }
-      container.innerHTML = `<p class="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2">Batch Results (${batchResults.length} files)</p>${rows}${zipControl}`;
+      const skippedNote = skippedBatchFiles > 0
+        ? `<p class="text-[11px] text-slate-500 dark:text-slate-400 mt-2">${skippedBatchFiles} empty file${skippedBatchFiles === 1 ? '' : 's'} skipped.</p>`
+        : '';
+      container.innerHTML = `<p class="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-2">Batch Results (${batchResults.length} files)</p>${rows}${zipControl}${skippedNote}`;
       container.classList.remove('hidden');
     }
 
@@ -297,8 +380,17 @@
       const format = document.getElementById('exportFormat').value;
       const minify = document.getElementById('minifyToggle').checked;
       const zip = new JSZip();
+      const usedNames = new Set();
       batchResults.forEach(r => {
-        zip.file(`${r.filename.replace(/\.[^.]+$/, '')}.${extFor(format)}`, formatOutput(r.data, format, minify));
+        const base = r.filename.replace(/\.[^.]+$/, '');
+        let name = `${base}.${extFor(format)}`;
+        let counter = 2;
+        while (usedNames.has(name)) {
+          name = `${base}-${counter}.${extFor(format)}`;
+          counter++;
+        }
+        usedNames.add(name);
+        zip.file(name, formatOutput(r.data, format, minify));
       });
       const blob = await zip.generateAsync({ type: 'blob' });
       const url = URL.createObjectURL(blob);
@@ -506,6 +598,7 @@
       const container = document.getElementById('batchResults');
       container.classList.add('hidden');
       container.innerHTML = '';
+      sessionStorage.removeItem('dpp_batchFiles');
     }
 
     function renderOutput() {
@@ -591,7 +684,7 @@
       }
       container.innerHTML = history.map((h, i) => `
         <button type="button" onclick="loadHistoryEntry(${i})" class="block w-full text-left px-2 py-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
-          <span class="text-[11px] text-slate-500 dark:text-slate-500">${new Date(h.ts).toLocaleString()} · ${formatLabels[h.formatType] || h.formatType}</span>
+          <span class="text-[11px] text-slate-500 dark:text-slate-400">${new Date(h.ts).toLocaleString()} · ${formatLabels[h.formatType] || h.formatType}</span>
           <div class="truncate text-slate-700 dark:text-slate-300 font-mono text-[11px]">${escapeHtml(h.preview)}</div>
         </button>
       `).join('');
@@ -635,8 +728,8 @@
       sessionStorage.setItem('dpp_unlocked', '1');
       const lockStatus = document.getElementById('lockStatus');
       lockStatus.textContent = 'Unlocked — full export available';
-      lockStatus.classList.remove('text-amber-600', 'dark:text-amber-400', 'hidden');
-      lockStatus.classList.add('text-emerald-600', 'dark:text-emerald-400');
+      lockStatus.classList.remove('text-amber-700', 'dark:text-amber-400', 'hidden');
+      lockStatus.classList.add('text-emerald-700', 'dark:text-emerald-400');
       document.getElementById('downloadFullBtn').classList.remove('hidden');
       document.getElementById('oneTimeCheckoutBtn').classList.add('hidden');
     }
@@ -668,17 +761,19 @@
       const alreadyPower = sessionStorage.getItem('dpp_power') === '1';
       const isUnlocked = justPaid || justWentPower || alreadyUnlocked || alreadyPower;
 
-      const savedInput = sessionStorage.getItem('dpp_rawInput');
-      if (savedInput && isUnlocked) {
-        document.getElementById('rawInput').value = savedInput;
-        processData();
-      }
-
       if (isUnlocked) {
         unlockExport();
       }
       if (justWentPower || alreadyPower) {
         unlockPower();
+      }
+
+      const restoredBatch = isUnlocked && restoreBatch();
+
+      const savedInput = sessionStorage.getItem('dpp_rawInput');
+      if (!restoredBatch && savedInput && isUnlocked) {
+        document.getElementById('rawInput').value = savedInput;
+        processData();
       }
 
       renderHistory();
@@ -696,10 +791,10 @@
           body: new FormData(form),
           headers: { 'Accept': 'application/json' }
         });
-        statusEl.classList.remove('hidden', 'text-red-600', 'dark:text-red-400', 'text-emerald-600', 'dark:text-emerald-400');
+        statusEl.classList.remove('hidden', 'text-red-600', 'dark:text-red-400', 'text-emerald-700', 'dark:text-emerald-400');
         if (res.ok) {
           statusEl.textContent = 'Thanks — got it!';
-          statusEl.classList.add('text-emerald-600', 'dark:text-emerald-400');
+          statusEl.classList.add('text-emerald-700', 'dark:text-emerald-400');
           form.reset();
         } else {
           statusEl.textContent = 'Something went wrong — please try again.';
