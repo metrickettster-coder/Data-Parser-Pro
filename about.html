@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About DataParser Pro — Free Online CSV, JSON &amp; Log File Parser</title>
+  <meta name="description" content="What DataParser Pro is, who built it, how the free preview and paid unlocks work, and how to get in touch.">
+  <link rel="canonical" href="https://data-parser-pro.pages.dev/about.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white text-slate-900 min-h-screen flex flex-col">
+  <header class="border-b border-slate-200">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+      <a href="/" class="font-bold text-lg tracking-tight">DataParser <span class="text-indigo-600">Pro</span></a>
+      <a href="/" class="text-sm text-indigo-600 hover:underline">&larr; Back to the app</a>
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6 text-sm leading-relaxed text-slate-700 flex-grow">
+    <h1 class="text-2xl font-extrabold text-slate-900">About DataParser Pro</h1>
+
+    <section class="space-y-2">
+      <h2 class="text-lg font-semibold text-slate-900">What it does</h2>
+      <p>DataParser Pro is a small, focused browser tool for cleaning up messy data. Paste or drop in a CSV export, a chunk of log output, source code, or loose key:value text, and it auto-detects the format and restructures it into JSON, CSV, or a Markdown table — instantly, with no upload step. It also handles multiple files at once, keeps a short local history of what you've run, and works from either a light or dark theme.</p>
+    </section>
+
+    <section class="space-y-2">
+      <h2 class="text-lg font-semibold text-slate-900">Why it's free to try</h2>
+      <p>Every input gets a full free preview of the first 5 structured rows, so you can see exactly what the tool would produce before paying anything. Unlocking the complete export costs $9 once, or $4.99/month for the Power tier if you regularly need batch processing across multiple files.</p>
+    </section>
+
+    <section class="space-y-2">
+      <h2 class="text-lg font-semibold text-slate-900">Why it's private by default</h2>
+      <p>The parsing itself runs entirely in your browser's JavaScript — there's no server that receives or stores the data you paste in. The only things that leave your device are an optional feedback message and, if you choose to pay, your billing details handled directly by Stripe. See the <a href="/privacy.html" class="text-indigo-600 hover:underline">Privacy Policy</a> for the full picture, including how any advertising on this site works.</p>
+    </section>
+
+    <section class="space-y-2">
+      <h2 class="text-lg font-semibold text-slate-900">Who's behind it</h2>
+      <p>DataParser Pro is built and maintained independently, as a single-purpose utility rather than a large company product. If you'd like it to do something it doesn't yet, the fastest way to reach me is the feedback form on the homepage.</p>
+    </section>
+
+    <section class="space-y-2">
+      <h2 class="text-lg font-semibold text-slate-900">Frequently asked questions</h2>
+      <div class="space-y-3">
+        <div>
+          <p class="font-medium text-slate-900">Is my data really not uploaded anywhere?</p>
+          <p>Correct — the parsing logic runs client-side in your browser. Opening your browser's network inspector while using the tool will show no request carrying your pasted content anywhere.</p>
+        </div>
+        <div>
+          <p class="font-medium text-slate-900">What formats does it detect?</p>
+          <p>CSV/TSV and other delimited text, timestamped log lines, source code (with comments split out), simple <code>key: value</code> data, and a plain-text fallback for anything else.</p>
+        </div>
+        <div>
+          <p class="font-medium text-slate-900">Can I cancel the Power subscription?</p>
+          <p>Yes, anytime — see the <a href="/terms.html" class="text-indigo-600 hover:underline">Terms of Service</a> for how.</p>
+        </div>
+      </div>
+    </section>
+
+    <p class="text-xs text-slate-500 pt-4 border-t border-slate-200">
+      <a href="/" class="hover:underline">Home</a> &middot;
+      <a href="/terms.html" class="hover:underline">Terms</a> &middot;
+      <a href="/privacy.html" class="hover:underline">Privacy</a>
+    </p>
+  </main>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is my data really not uploaded anywhere?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Correct — the parsing logic runs client-side in your browser. Opening your browser's network inspector while using the tool will show no request carrying your pasted content anywhere." }
+      },
+      {
+        "@type": "Question",
+        "name": "What formats does DataParser Pro detect?",
+        "acceptedAnswer": { "@type": "Answer", "text": "CSV/TSV and other delimited text, timestamped log lines, source code (with comments split out), simple key: value data, and a plain-text fallback for anything else." }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I cancel the Power subscription?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes, anytime, effective at the end of the current billing period." }
+      }
+    ]
+  }
+  </script>
+</body>
+</html>
