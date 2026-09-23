@@ -1,0 +1,14 @@
+# ads.txt - Authorized Digital Sellers
+#
+# This file is required by Google AdSense once you're approved, so ad
+# exchanges can verify who's authorized to sell ad space on this site.
+#
+# Setup:
+# 1. Sign up at https://www.google.com/adsense and get your publisher ID
+#    (looks like pub-XXXXXXXXXXXXXXXX).
+# 2. Replace REPLACE_WITH_YOUR_PUBLISHER_ID below with that ID (keep the
+#    "pub-" prefix).
+# 3. This file must be reachable at https://data-parser-pro.pages.dev/ads.txt
+#    (it already will be, once deployed, since it sits at the repo root).
+#
+# google.com, pub-REPLACE_WITH_YOUR_PUBLISHER_ID, DIRECT, f08c47fec0942fa0
